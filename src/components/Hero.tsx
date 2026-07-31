@@ -31,13 +31,18 @@ const CARDS_DATA = [
     subtitle: 'Institutional Website',
     image: '/assets/hero_card_4.webp',
   },
+  {
+    id: 'card-5',
+    title: 'Basicare',
+    subtitle: 'Corporate Website',
+    image: '/assets/hero_card_5.webp',
+  },
 ];
 
 const MENU_ITEMS = [
   { name: 'Projects', targetId: 'projects' },
   { name: 'Tech Stack', targetId: 'tech-stack' },
   { name: 'Services', targetId: 'services' },
-  { name: 'Experience', targetId: 'experience' },
   { name: 'Contact', targetId: 'contact' },
 ];
 
@@ -48,6 +53,7 @@ export default function Hero() {
   const [isLocked, setIsLocked] = useState(true);
   const [isExpanding, setIsExpanding] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isContactHidden, setIsContactHidden] = useState(false);
   const [buttonRect, setButtonRect] = useState<{
     top: number;
     left: number;
@@ -266,10 +272,10 @@ export default function Hero() {
   return (
     <section
       ref={heroRef}
-      className="relative h-screen w-full bg-[#f5f5f6] text-[#0f0f10] overflow-hidden flex flex-col justify-between select-none py-6 px-0 z-10"
+      className="relative h-screen w-full bg-transparent text-white overflow-hidden flex flex-col justify-between select-none py-6 px-0 z-10"
     >
       {/* Subtle Grid Ambient Pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#000000_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05] pointer-events-none" />
 
       {/* TOP FLOATING BAR */}
       <header className="relative z-30 flex items-center justify-between w-full max-w-7xl mx-auto pt-2">
@@ -319,6 +325,9 @@ export default function Hero() {
                         e.stopPropagation();
                         setMenuOpen(false);
                         playClickSound(550);
+                        if (item.targetId === 'contact') {
+                          setIsContactHidden(true);
+                        }
                         unlockAndNavigate(e, item.targetId);
                       }}
                       className="group flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-mono font-bold tracking-wider text-zinc-300 hover:text-white transition-all text-left"
@@ -355,16 +364,24 @@ export default function Hero() {
           </button>
 
           {/* BOOK US CTA Pill Button */}
-          <button
-            onClick={(e) => {
-              playClickSound(650);
-              unlockAndNavigate(e, 'contact');
-            }}
-            data-cursor="CONTACT"
-            className="flex items-center px-5 py-2 rounded-full bg-white shadow-sm border border-black/5 text-black font-extrabold text-xs tracking-widest uppercase hover:bg-black hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
-          >
-            CLICK HERE TO MAKE YOUR WEBSITE!
-          </button>
+          <AnimatePresence>
+            {!isContactHidden && (
+              <motion.button
+                initial={{ opacity: 0, y: -15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
+                onClick={(e) => {
+                  setIsContactHidden(true);
+                  playClickSound(650);
+                  unlockAndNavigate(e, 'contact');
+                }}
+                data-cursor="CONTACT"
+                className="flex items-center px-5 py-2 rounded-full bg-white shadow-sm border border-black/5 text-black font-extrabold text-xs tracking-widest uppercase hover:bg-black hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                CONTACT ME!
+              </motion.button>
+            )}
+          </AnimatePresence>
         </motion.div>
       </header>
 
@@ -375,7 +392,7 @@ export default function Hero() {
           <motion.div
             animate={{ x: ['0%', '-50%'] }}
             transition={{ repeat: Infinity, duration: 22, ease: 'linear' }}
-            className="flex whitespace-nowrap font-extrabold text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[130px] tracking-tighter uppercase text-black/[0.08]"
+            className="flex whitespace-nowrap font-extrabold text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[130px] tracking-tighter uppercase text-white/10"
           >
             <span className="pr-8">PORTFOLIO WEBSITE * PORTFOLIO WEBSITE * PORTFOLIO WEBSITE * PORTFOLIO WEBSITE * </span>
             <span className="pr-8">PORTFOLIO WEBSITE * PORTFOLIO WEBSITE * PORTFOLIO WEBSITE * PORTFOLIO WEBSITE * </span>
