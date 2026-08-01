@@ -2,18 +2,48 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { ArrowUpRight, ExternalLink, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
-import { PROJECTS, Project } from '@/data/portfolioData';
+import { ArrowUpRight, ExternalLink, Sparkles, ChevronLeft, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { Project } from '@/data/portfolioData';
+import { fetchSelectedWorks } from '@/lib/api';
 
 export default function Projects() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   const xMotion = useMotionValue(0);
   const smoothX = useSpring(xMotion, { damping: 30, stiffness: 250 });
 
   const [maxScroll, setMaxScroll] = useState(0);
   const currentPosRef = useRef(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    setIsError(false);
+
+    fetchSelectedWorks()
+      .then((data) => {
+        if (isMounted) {
+          setProjects(data);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching selected works:', err);
+        if (isMounted) {
+          setIsError(true);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const updateMaxScroll = () => {
     if (trackRef.current) {
@@ -29,7 +59,7 @@ export default function Projects() {
     updateMaxScroll();
     window.addEventListener('resize', updateMaxScroll);
     return () => window.removeEventListener('resize', updateMaxScroll);
-  }, []);
+  }, [projects]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -155,21 +185,41 @@ export default function Projects() {
 
       {/* Horizontal Project Track */}
       <div className="w-full overflow-hidden cursor-grab active:cursor-grabbing">
-        <motion.div
-          ref={trackRef}
-          style={{ x: smoothX }}
-          drag="x"
-          dragConstraints={{ left: -maxScroll, right: 0 }}
-          onDragEnd={(_, info) => {
-            const currentX = xMotion.get();
-            currentPosRef.current = Math.min(maxScroll, Math.max(0, -currentX));
-          }}
-          className="flex gap-6 sm:gap-8 px-4 sm:px-8 md:px-12 w-max"
-        >
-          {PROJECTS.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </motion.div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24 gap-3 text-zinc-400 font-mono text-sm">
+            <Loader2 className="animate-spin text-white" size={20} />
+            <span>Loading selected works...</span>
+          </div>
+        ) : isError ? (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="p-6 rounded-2xl glass-card border border-rose-500/20 text-zinc-400 text-sm flex items-center gap-3">
+              <AlertCircle size={20} className="text-rose-400 shrink-0" />
+              <span>Unable to load selected works at this time. Please check backend API connection.</span>
+            </div>
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="p-6 rounded-2xl glass-card border border-white/10 text-zinc-400 text-sm font-mono">
+              No selected works currently available.
+            </div>
+          </div>
+        ) : (
+          <motion.div
+            ref={trackRef}
+            style={{ x: smoothX }}
+            drag="x"
+            dragConstraints={{ left: -maxScroll, right: 0 }}
+            onDragEnd={(_, info) => {
+              const currentX = xMotion.get();
+              currentPosRef.current = Math.min(maxScroll, Math.max(0, -currentX));
+            }}
+            className="flex gap-6 sm:gap-8 px-4 sm:px-8 md:px-12 w-max"
+          >
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </motion.div>
+        )}
       </div>
     </section>
   );
