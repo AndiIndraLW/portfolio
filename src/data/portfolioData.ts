@@ -65,7 +65,7 @@ export const PROJECTS: Project[] = [
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "Geolocation API", "Ios App", "Android App", "Figma"],
     year: "2026",
     featured: true,
-    image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/kopakopi.png",
     demoUrl: "https://kopakopi.co",
   },
   {
@@ -78,7 +78,7 @@ export const PROJECTS: Project[] = [
     tags: ["Next.js", "TypeScript", "Tailwind CSS"],
     year: "2025",
     featured: true,
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/hero_card_5.webp",
     demoUrl: "https://basicare.com.au",
   },
   {
@@ -91,7 +91,7 @@ export const PROJECTS: Project[] = [
     tags: ["WordPress", "Elementor", "Custom CSS", "Custom HTML"],
     year: "2025",
     featured: true,
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/hero_card_4.webp",
     demoUrl: "https://fisip.ub.ac.id",
   },
   {
@@ -104,7 +104,7 @@ export const PROJECTS: Project[] = [
     tags: ["WordPress", "Elementor", "Custom CSS", "Custom HTML", "Figma"],
     year: "2025",
     featured: true,
-    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/hero_card_3.webp",
     demoUrl: "https://saranganmedicare.co.id",
   },
   {
@@ -117,20 +117,20 @@ export const PROJECTS: Project[] = [
     tags: ["WordPress", "Elementor", "Custom CSS"],
     year: "2024",
     featured: true,
-    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/hero_card_2.webp",
     demoUrl: "https://handall.id",
   },
   {
     id: "artcofest",
     title: "artcofest.com",
     category: "E-Commerce Website",
-    tagline: "E-Commerce Website",
-    description: "ArtcoFest is an event and e-commerce website that allows visitors to purchase tickets for the festival online. The project also includes an Android ticket-scanning app that enables event staff to quickly and seamlessly verify tickets using a smartphone, providing a smooth check-in experience for attendees.",
-    longDescription: "ArtcoFest is an event and e-commerce website that allows visitors to purchase tickets for the festival online. The project also includes an Android ticket-scanning app that enables event staff to quickly and seamlessly verify tickets using a smartphone, providing a smooth check-in experience for attendees.",
+    tagline: "Ticketing Website",
+    description: "ArtcoFest is an event and ticketing website that allows visitors to purchase tickets for the festival online. The project also includes an Android ticket-scanning app that enables event staff to quickly and seamlessly verify tickets using a smartphone, providing a smooth check-in experience for attendees.",
+    longDescription: "ArtcoFest is an event and ticketing website that allows visitors to purchase tickets for the festival online. The project also includes an Android ticket-scanning app that enables event staff to quickly and seamlessly verify tickets using a smartphone, providing a smooth check-in experience for attendees.",
     tags: ["WordPress", "Elementor", "Custom CSS", "Custom HTML", "Figma"],
     year: "2024",
     featured: true,
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/hero_card_6.jpg",
     demoUrl: "https://artcofest.com",
   },
   {
@@ -143,7 +143,7 @@ export const PROJECTS: Project[] = [
     tags: ["WordPress", "Elementor", "Custom CSS", "Custom HTML", "Figma"],
     year: "2024",
     featured: true,
-    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/hero_card_7.PNG",
     demoUrl: "https://ibschool-batu.com",
   },
   {
@@ -156,7 +156,7 @@ export const PROJECTS: Project[] = [
     tags: ["WordPress", "Divi", "Custom CSS", "Custom HTML", "Figma"],
     year: "2024",
     featured: true,
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
+    image: "/assets/hero_card_8.jpg",
     demoUrl: "https://pauau.com",
   },
 ];
@@ -168,16 +168,16 @@ export const TECH_SKILLS = [
   { name: "Tailwind CSS", category: "Styling", icon: "🎨" },
   { name: "Figma", category: "UI/UX Design", icon: "📐" },
   { name: "GSAP", category: "Animation", icon: "🚀" },
-  { name: "WordPress", category: "DevOps", icon: "📚" },
-  { name: "Elementor", category: "DevOps", icon: "✨" },
-  { name: "Divi", category: "DevOps", icon: "🎲" },
+  { name: "WordPress", category: "CMS", icon: "📚" },
+  { name: "Elementor", category: "Page Builder", icon: "✨" },
+  { name: "Divi", category: "Page Builder", icon: "🎲" },
 ];
 
 export const SERVICES: Service[] = [
   {
     id: "fullstack-dev",
     number: "01",
-    title: "Full-Stack Web Development",
+    title: "Web Development",
     description: "Building scalable, high-performance web applications with Next.js, TypeScript, and modern API architectures engineered for speed and precision.",
     features: ["App Router & Server Actions", "Type-safe APIs & Databases", "Sub-second Page Load Speeds", "SEO & Core Web Vitals Optimization"],
     iconName: "Code2",
