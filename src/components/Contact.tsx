@@ -4,6 +4,7 @@ import { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Mail, Copy, Check, Send, Sparkles, ArrowUpRight, Globe, Share2 } from 'lucide-react';
 import { PERSONAL_INFO } from '@/data/portfolioData';
+import { submitContactForm } from '@/lib/api';
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
@@ -15,6 +16,7 @@ export default function Contact() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const copyEmail = () => {
     navigator.clipboard.writeText(PERSONAL_INFO.email);
@@ -22,13 +24,21 @@ export default function Contact() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formState.name || !formState.email || !formState.message) return;
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+
+    try {
+      await submitContactForm({
+        name: formState.name,
+        email: formState.email,
+        project_type: formState.projectType,
+        message: formState.message,
+      });
+
       setSubmitted(true);
 
       // Trigger monochrome confetti celebration
@@ -38,7 +48,12 @@ export default function Contact() {
         origin: { y: 0.6 },
         colors: ['#ffffff', '#e4e4e7', '#a1a1aa', '#52525b'],
       });
-    }, 800);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -112,25 +127,13 @@ export default function Contact() {
                 </a>
 
                 <a
-                  href={PERSONAL_INFO.twitter}
+                  href={PERSONAL_INFO.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="glass-card p-3.5 rounded-xl flex items-center justify-between text-zinc-300 hover:text-white hover:border-white/30 transition-all"
                 >
                   <span className="flex items-center gap-2">
-                    <Globe size={16} /> Twitter / X
-                  </span>
-                  <ArrowUpRight size={14} />
-                </a>
-
-                <a
-                  href={PERSONAL_INFO.dribbble}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="glass-card p-3.5 rounded-xl flex items-center justify-between text-zinc-300 hover:text-white hover:border-white/30 transition-all"
-                >
-                  <span className="flex items-center gap-2">
-                    <Share2 size={16} /> Dribbble
+                    <Globe size={16} /> Instagram
                   </span>
                   <ArrowUpRight size={14} />
                 </a>
@@ -153,6 +156,7 @@ export default function Contact() {
                   <button
                     onClick={() => {
                       setSubmitted(false);
+                      setError(null);
                       setFormState({ name: '', email: '', projectType: 'Web Development', message: '' });
                     }}
                     className="px-6 py-2.5 rounded-full bg-white/10 text-white font-mono text-xs hover:bg-white/20 transition-colors"
@@ -162,6 +166,11 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono">
+                      {error}
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Name */}
                     <div>
@@ -204,10 +213,10 @@ export default function Contact() {
                       onChange={(e) => setFormState({ ...formState, projectType: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white focus:outline-none focus:border-white font-mono text-sm transition-colors"
                     >
-                      <option value="Web Development">Web Development & Next.js</option>
-                      <option value="Creative Motion & WebGL">Creative Motion & Animations</option>
-                      <option value="UI/UX & Design System">UI/UX & Design System</option>
-                      <option value="Full Project Collaboration">Full Project Collaboration</option>
+                      <option value="Web Development">Website development</option>
+                      <option value="Web Development">App development</option>
+                      <option value="UI/UX & Design System">UI/UX Design</option>
+                      <option value="UI/UX & Design System">Others</option>
                     </select>
                   </div>
 

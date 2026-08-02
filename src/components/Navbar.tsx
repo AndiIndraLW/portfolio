@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, VolumeX, Menu, X, ArrowUpRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight } from 'lucide-react';
 
 export default function Navbar() {
   const [timeString, setTimeString] = useState('');
@@ -111,7 +111,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Navigation Links + Audio Toggle (Desktop) */}
+        {/* Navigation Links (Desktop) */}
         <div className="hidden md:flex items-center gap-8">
           <nav className="flex items-center gap-6 text-sm font-mono tracking-wider">
             {navLinks.map((link) => (
@@ -127,39 +127,10 @@ export default function Navbar() {
               </a>
             ))}
           </nav>
-
-          {/* Sound Synthesizer Toggle */}
-          <button
-            onClick={() => {
-              setSoundEnabled(!soundEnabled);
-              playClickSound(800);
-            }}
-            data-cursor="AUDIO"
-            className={`p-2 rounded-full border transition-all duration-300 ${
-              soundEnabled
-                ? 'border-white text-white bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.2)]'
-                : 'border-white/10 text-zinc-400 hover:text-white hover:border-white/30'
-            }`}
-            title={soundEnabled ? 'Mute Sound FX' : 'Enable Sound FX'}
-          >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-          </button>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex md:hidden items-center gap-3">
-          <button
-            onClick={() => {
-              setSoundEnabled(!soundEnabled);
-              playClickSound(800);
-            }}
-            className={`p-2 rounded-full border text-xs ${
-              soundEnabled ? 'border-white text-white' : 'border-white/10 text-zinc-400'
-            }`}
-          >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-          </button>
-
           <button
             onClick={() => {
               setMobileMenuOpen(!mobileMenuOpen);

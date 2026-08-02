@@ -47,11 +47,10 @@ export const PERSONAL_INFO = {
   location: "Jakarta, Indonesia (UTC+7)",
   status: "Available for Freelance & Full-time",
   bio: "Crafting digital experiences at the intersection of high-performance engineering, fluid motion design, and bold typography.",
-  email: "hello@andiindra.dev",
+  email: "andiindrawork@gmail.com",
   github: "https://github.com/AndiIndraLW",
-  linkedin: "https://linkedin.com/in/andiindralw",
-  twitter: "https://x.com/andiindralw",
-  dribbble: "https://dribbble.com",
+  linkedin: "https://www.linkedin.com/in/andi-indra-lestya-wicaksono/",
+  instagram: "https://instagram.com/andiindra.dev",
 };
 
 export const PROJECTS: Project[] = [

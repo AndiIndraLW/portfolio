@@ -14,9 +14,6 @@ export default function Footer() {
         {/* Giant Kinetic Footer Title */}
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-12 gap-8">
           <div>
-            <span className="text-xs font-mono text-zinc-400 block mb-2">
-              DESIGNED & CODED WITH PRECISION
-            </span>
             <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter uppercase text-white leading-none">
               ANDI INDRA <span className="text-outline">LESTYA WICAKSONO</span>
             </h2>
@@ -39,9 +36,7 @@ export default function Footer() {
             © {new Date().getFullYear()} {PERSONAL_INFO.name}. All rights reserved.
           </div>
           <div className="flex items-center gap-6">
-            <span>Built with Next.js 15 & Framer Motion</span>
-            <span>•</span>
-            <span className="text-zinc-400">Jakarta, ID</span>
+            <span className="text-zinc-400">Indonesia</span>
           </div>
         </div>
       </div>

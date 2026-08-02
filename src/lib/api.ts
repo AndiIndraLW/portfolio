@@ -102,3 +102,30 @@ export async function fetchServices(): Promise<Service[]> {
     iconName: 'Code2',
   }));
 }
+
+export interface ContactFormPayload {
+  name: string;
+  email: string;
+  project_type: string;
+  message: string;
+}
+
+export async function submitContactForm(data: ContactFormPayload): Promise<{ message: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/submissions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  const json = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(json.message || 'Failed to submit contact form. Please try again.');
+  }
+
+  return json;
+}
+
