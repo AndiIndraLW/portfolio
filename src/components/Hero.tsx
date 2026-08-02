@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX, MoreHorizontal, ArrowDown, ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
+import { fetchHomepageSelectedWorks, HomepageCard } from '@/lib/api';
 
 const CARDS_DATA = [
   {
@@ -48,7 +49,25 @@ const MENU_ITEMS = [
 
 export default function Hero() {
   const router = useRouter();
+  const [cards, setCards] = useState<HomepageCard[]>(CARDS_DATA);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchHomepageSelectedWorks()
+      .then((data) => {
+        if (isMounted && data && data.length > 0) {
+          setCards(data);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch homepage selected works:', err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
   const [isExpanding, setIsExpanding] = useState(false);
@@ -137,12 +156,12 @@ export default function Hero() {
     const DELTA_THRESHOLD = 30; // Minimum scroll delta magnitude required
 
     const triggerNextCard = () => {
-      setActiveCardIndex((prev) => (prev + 1) % CARDS_DATA.length);
+      setActiveCardIndex((prev) => (prev + 1) % cards.length);
       playClickSound(500);
     };
 
     const triggerPrevCard = () => {
-      setActiveCardIndex((prev) => (prev - 1 + CARDS_DATA.length) % CARDS_DATA.length);
+      setActiveCardIndex((prev) => (prev - 1 + cards.length) % cards.length);
       playClickSound(450);
     };
 
@@ -236,7 +255,7 @@ export default function Hero() {
   }, [isLocked, playClickSound]);
 
   const cycleCard = () => {
-    setActiveCardIndex((prev) => (prev + 1) % CARDS_DATA.length);
+    setActiveCardIndex((prev) => (prev + 1) % cards.length);
   };
 
   const unlockAndNavigate = (e?: React.MouseEvent<HTMLElement>, targetId?: string) => {
@@ -405,11 +424,11 @@ export default function Hero() {
         >
           {/* Render Stacked Layers */}
           <div className="relative w-full h-full flex items-center justify-center">
-            {CARDS_DATA.map((card, index) => {
+            {cards.map((card, index) => {
               // Calculate offset relative to activeCardIndex in range [-N/2, N/2]
-              let diff = (index - activeCardIndex) % CARDS_DATA.length;
-              if (diff > CARDS_DATA.length / 2) diff -= CARDS_DATA.length;
-              if (diff < -CARDS_DATA.length / 2) diff += CARDS_DATA.length;
+              let diff = (index - activeCardIndex) % cards.length;
+              if (diff > cards.length / 2) diff -= cards.length;
+              if (diff < -cards.length / 2) diff += cards.length;
 
               const isFront = diff === 0;
               const isPrev = diff === -1;
@@ -460,9 +479,9 @@ export default function Hero() {
                     e.stopPropagation();
                     playClickSound(500);
                     if (isPrev) {
-                      setActiveCardIndex((prev) => (prev - 1 + CARDS_DATA.length) % CARDS_DATA.length);
+                      setActiveCardIndex((prev) => (prev - 1 + cards.length) % cards.length);
                     } else {
-                      setActiveCardIndex((prev) => (prev + 1) % CARDS_DATA.length);
+                      setActiveCardIndex((prev) => (prev + 1) % cards.length);
                     }
                   }}
                   className={`absolute inset-0 rounded-[24px] sm:rounded-[32px] bg-white shadow-xl border border-black/10 overflow-hidden cursor-pointer transition-shadow duration-300 ${isFront ? 'hover:shadow-2xl' : 'hover:opacity-100'
@@ -498,6 +517,7 @@ export default function Hero() {
                       fill
                       priority={isFront}
                       className="object-cover object-center transition-transform duration-700 hover:scale-105"
+                      unoptimized={card.image.startsWith('http')}
                     />
 
                     {/* Overlay Badge on Front Card */}
@@ -513,7 +533,7 @@ export default function Hero() {
                         </div>
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black text-white text-[9px] font-mono font-bold uppercase tracking-wider">
                           <span>SCROLL / TAP</span>
-                          <span className="text-white/60">({activeCardIndex + 1}/{CARDS_DATA.length})</span>
+                          <span className="text-white/60">({activeCardIndex + 1}/{cards.length})</span>
                         </div>
                       </div>
                     )}

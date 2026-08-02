@@ -304,7 +304,7 @@ function ProjectCard({ project }: { project: Project }) {
         <div className="flex flex-col gap-4 pt-4 border-t border-white/5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
+              {(project.tags || []).map((tag) => (
                 <span
                   key={tag}
                   className="text-[10px] font-mono px-2.5 py-1 rounded bg-white/5 text-zinc-400 border border-white/5"
