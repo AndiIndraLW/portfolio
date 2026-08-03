@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { ArrowUpRight, ExternalLink, Sparkles, ChevronLeft, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Sparkles, ChevronLeft, ChevronRight, ChevronDown, Loader2, AlertCircle } from 'lucide-react';
 import { Project } from '@/data/portfolioData';
 import { fetchSelectedWorks } from '@/lib/api';
 
@@ -13,12 +13,23 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const [visibleMobileCount, setVisibleMobileCount] = useState(4);
+  const [isMobile, setIsMobile] = useState(false);
 
   const xMotion = useMotionValue(0);
   const smoothX = useSpring(xMotion, { damping: 30, stiffness: 250 });
 
   const [maxScroll, setMaxScroll] = useState(0);
   const currentPosRef = useRef(0);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -46,7 +57,7 @@ export default function Projects() {
   }, []);
 
   const updateMaxScroll = () => {
-    if (trackRef.current) {
+    if (trackRef.current && !isMobile) {
       const trackWidth = trackRef.current.scrollWidth;
       const windowWidth = window.innerWidth;
       const padding = 64;
@@ -59,13 +70,14 @@ export default function Projects() {
     updateMaxScroll();
     window.addEventListener('resize', updateMaxScroll);
     return () => window.removeEventListener('resize', updateMaxScroll);
-  }, [projects]);
+  }, [projects, isMobile]);
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    if (!section || isMobile) return;
 
     const handleWheel = (e: WheelEvent) => {
+      if (window.innerWidth < 768) return;
       const rect = section.getBoundingClientRect();
       const isInView = rect.top <= 140 && rect.bottom >= window.innerHeight - 140;
       if (!isInView) return;
@@ -101,6 +113,7 @@ export default function Projects() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      if (window.innerWidth < 768) return;
       const rect = section.getBoundingClientRect();
       const isInView = rect.top <= 140 && rect.bottom >= window.innerHeight - 140;
       if (!isInView) return;
@@ -133,7 +146,7 @@ export default function Projects() {
       section.removeEventListener('touchstart', handleTouchStart);
       section.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [maxScroll, xMotion]);
+  }, [maxScroll, xMotion, isMobile]);
 
   const handleNext = () => {
     const next = Math.min(maxScroll, currentPosRef.current + 480);
@@ -145,6 +158,10 @@ export default function Projects() {
     const next = Math.max(0, currentPosRef.current - 480);
     currentPosRef.current = next;
     xMotion.set(-next);
+  };
+
+  const handleLoadMore = () => {
+    setVisibleMobileCount((prev) => prev + 4);
   };
 
   return (
@@ -164,8 +181,8 @@ export default function Projects() {
           </h2>
         </div>
 
-        {/* Navigation Controls */}
-        <div className="flex items-center gap-3">
+        {/* Navigation Controls (Desktop only) */}
+        <div className="hidden md:flex items-center gap-3">
           <button
             onClick={handlePrev}
             className="p-3 rounded-full border border-white/10 text-white hover:bg-white/10 transition-colors"
@@ -183,44 +200,72 @@ export default function Projects() {
         </div>
       </div>
 
-      {/* Horizontal Project Track */}
-      <div className="w-full overflow-hidden cursor-grab active:cursor-grabbing">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-24 gap-3 text-zinc-400 font-mono text-sm">
-            <Loader2 className="animate-spin text-white" size={20} />
-            <span>Loading selected works...</span>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-24 gap-3 text-zinc-400 font-mono text-sm">
+          <Loader2 className="animate-spin text-white" size={20} />
+          <span>Loading selected works...</span>
+        </div>
+      ) : isError ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="p-6 rounded-2xl glass-card border border-rose-500/20 text-zinc-400 text-sm flex items-center gap-3">
+            <AlertCircle size={20} className="text-rose-400 shrink-0" />
+            <span>Unable to load selected works at this time. Please check backend API connection.</span>
           </div>
-        ) : isError ? (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="p-6 rounded-2xl glass-card border border-rose-500/20 text-zinc-400 text-sm flex items-center gap-3">
-              <AlertCircle size={20} className="text-rose-400 shrink-0" />
-              <span>Unable to load selected works at this time. Please check backend API connection.</span>
-            </div>
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="p-6 rounded-2xl glass-card border border-white/10 text-zinc-400 text-sm font-mono">
+            No selected works currently available.
           </div>
-        ) : projects.length === 0 ? (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="p-6 rounded-2xl glass-card border border-white/10 text-zinc-400 text-sm font-mono">
-              No selected works currently available.
-            </div>
-          </div>
-        ) : (
-          <motion.div
-            ref={trackRef}
-            style={{ x: smoothX }}
-            drag="x"
-            dragConstraints={{ left: -maxScroll, right: 0 }}
-            onDragEnd={(_, info) => {
-              const currentX = xMotion.get();
-              currentPosRef.current = Math.min(maxScroll, Math.max(0, -currentX));
-            }}
-            className="flex gap-6 sm:gap-8 px-4 sm:px-8 md:px-12 w-max"
-          >
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+        </div>
+      ) : (
+        <>
+          {/* Mobile Vertical List with Load More */}
+          <div className="flex md:hidden flex-col gap-6 px-4 w-full">
+            {projects.slice(0, visibleMobileCount).map((project, idx) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: Math.min(idx * 0.05, 0.2) }}
+              >
+                <ProjectCard project={project} />
+              </motion.div>
             ))}
-          </motion.div>
-        )}
-      </div>
+
+            {visibleMobileCount < projects.length && (
+              <div className="flex justify-center pt-2">
+                <button
+                  onClick={handleLoadMore}
+                  className="group w-full py-3.5 px-6 rounded-xl font-mono text-xs font-bold uppercase tracking-wider bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-all flex items-center justify-center gap-2 active:scale-98 shadow-lg backdrop-blur-sm"
+                >
+                  <span>Load More Works</span>
+                  <ChevronDown size={16} className="text-zinc-400 group-hover:translate-y-0.5 transition-transform" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Horizontal Track */}
+          <div className="hidden md:block w-full overflow-hidden cursor-grab active:cursor-grabbing">
+            <motion.div
+              ref={trackRef}
+              style={{ x: smoothX }}
+              drag="x"
+              dragConstraints={{ left: -maxScroll, right: 0 }}
+              onDragEnd={(_, info) => {
+                const currentX = xMotion.get();
+                currentPosRef.current = Math.min(maxScroll, Math.max(0, -currentX));
+              }}
+              className="flex gap-6 sm:gap-8 px-4 sm:px-8 md:px-12 w-max"
+            >
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </motion.div>
+          </div>
+        </>
+      )}
     </section>
   );
 }
@@ -254,7 +299,7 @@ function ProjectCard({ project }: { project: Project }) {
         transform: `perspective(1000px) rotateX(${transform.rotateX}deg) rotateY(${transform.rotateY}deg)`,
         transition: 'transform 0.15s ease-out',
       }}
-      className="group glass-card glass-card-glow rounded-2xl overflow-hidden flex flex-col justify-between w-[85vw] sm:w-[460px] md:w-[500px] flex-shrink-0"
+      className="group glass-card glass-card-glow rounded-2xl overflow-hidden flex flex-col justify-between w-full md:w-[500px] md:flex-shrink-0"
     >
       {/* Thumbnail Container */}
       <div className="relative h-48 sm:h-56 w-full overflow-hidden bg-zinc-900 flex-shrink-0">

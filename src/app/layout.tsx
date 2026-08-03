@@ -29,6 +29,11 @@ export const metadata: Metadata = {
     'Frontend Engineer',
   ],
   authors: [{ name: 'Andi Indra Lestya Wicaksono' }],
+  icons: {
+    icon: '/assets/favicon.png',
+    shortcut: '/assets/favicon.png',
+    apple: '/assets/favicon.png',
+  },
   openGraph: {
     title: 'Andi Indra Lestya Wicaksono | Creative Developer Portfolio',
     description:

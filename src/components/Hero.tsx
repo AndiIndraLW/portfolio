@@ -291,13 +291,13 @@ export default function Hero() {
   return (
     <section
       ref={heroRef}
-      className="relative h-screen w-full bg-transparent text-white overflow-hidden flex flex-col justify-between select-none py-6 px-0 z-10"
+      className="relative h-screen w-full bg-transparent text-white overflow-hidden flex flex-col justify-between select-none py-6 px-5 sm:px-6 lg:px-8 z-10"
     >
       {/* Subtle Grid Ambient Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05] pointer-events-none" />
 
       {/* TOP FLOATING BAR */}
-      <header className="relative z-30 flex items-center justify-between w-full max-w-7xl mx-auto pt-2">
+      <header className="relative z-30 flex items-center justify-between w-full max-w-7xl mx-auto pt-2 px-1 sm:px-0">
         {/* Top Left Pill: Three dots + Logo with Pop-up Menu */}
         <div className="relative z-50">
           <motion.button
@@ -546,7 +546,7 @@ export default function Hero() {
       </div>
 
       {/* BOTTOM FLOATING BAR: ARROW DOWN BUTTON (LEFT) & ACTION BUTTONS (RIGHT) */}
-      <footer className="relative z-30 flex items-end justify-between w-full max-w-7xl mx-auto pb-2">
+      <footer className="relative z-30 flex items-end justify-between w-full max-w-7xl mx-auto pb-2 px-1 sm:px-0">
         {/* Bottom Left: Arrow Down Pill/Button to Move to Next Section */}
         <motion.button
           initial={{ opacity: 0, y: 20 }}
